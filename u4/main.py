@@ -6,8 +6,9 @@ LARGEFONT = ("Verdana", 45)
 class tkinterApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
-        self.iconphoto(True, tk.PhotoImage(file='logo (2) (1).png')) 
+        self.iconphoto(True, tk.PhotoImage(file='logo.png')) 
         self.title('College E-Sports')
+        self.geometry("600x750")
 
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
@@ -27,73 +28,149 @@ class tkinterApp(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
 
-class StartPage(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        self["bg"] = "black"
-        
-        # Load the image
-        photo = tk.PhotoImage(file= "logo (2) (1).png")
-        
-        # Subsample the image
-        # Subsample the image
-        subsampled_image = photo.subsample(25)
-        # Create the button with the subsampled image
-        style =ttk.Style()
-        style.theme_use("clam")
-       
+    def create_element(self, page):
+        # Get the text from the Text widget
+        element_name = page.text_box.get("1.0", "end-1c")
 
-        style.configure("black.TButton",  background="#000", )
-        button = ttk.Button(
-            self, 
-            image=subsampled_image, 
-            command=lambda: controller.show_frame(StartPage ),
-            style="black.TButton" 
-            )
-     
-        button.photo = subsampled_image
-        button.grid(row=0, column=0)
-        
+        # Create a frame to contain the element details
+        element_details_frame = tk.Frame(page.element_frame, bg="white")
+        element_details_frame.pack(side="top", fill="x", padx=40, pady=10, ipady=5)
 
-        label = ttk.Label(self, text="Welcome to College E-Sports", font=("Helvetica", 16), background='black', foreground='white')
-        label.grid(row=0, column=1, padx=10, pady=10)
-        button1 = ttk.Button(self, text="Add Player", command=lambda: controller.show_frame(Page1))
-        button1.grid(row=1, column=0, padx=0, pady=20)
+        # Label for the element name
+        name_label = tk.Label(element_details_frame, text=f"{element_name}", bg="white")
+        name_label.pack(side="top", fill="x")
 
-        button2 = ttk.Button(self, text="Add Team", command=lambda: controller.show_frame(Page2))
-        button2.grid(row=1, column=1, padx=0, pady=20)
+        # Button to add players
+        add_player_button = tk.Button(element_details_frame, text="Add Player", bg="#000", fg="#fff", command=lambda: self.add_player(element_details_frame))
+        add_player_button.pack(side="top", pady=5)
 
-        button1 = ttk.Button(self, text="Add Player", command=lambda: controller.show_frame(Page1))
-        button1.grid(row=1, column=0, padx=0, pady=20)
+        # Increment the element counter
+        page.element_counter += 1
 
-        button2 = ttk.Button(self, text="Add Team", command=lambda: controller.show_frame(Page2))
-        button2.grid(row=1, column=1, padx=0, pady=20)
+    def add_player(self, parent):
+        # Create a frame to contain player input
+        player_frame = tk.Frame(parent, bg="white")
+        player_frame.pack(side="top", fill="x", padx=10, pady=5, ipady=5)
+
+        # Text box for player's name and total score
+        player_name_entry = tk.Entry(player_frame, width=30)
+        player_name_entry.pack(side="left", padx=(0, 10))
+        player_score_entry = tk.Entry(player_frame, width=10)
+        player_score_entry.pack(side="left", padx=(0, 10))
+
+        # Button to append player information
+        append_button = tk.Button(player_frame, text="Append", bg="#000", fg="#fff")
+        append_button.pack(side="left")
+
 
 class Page1(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+        self["bg"] = "black"
+        self.photo = tk.PhotoImage(file='logo.png')
+        self.photo = self.photo.subsample(20)
+        self.image_label = ttk.Label(
+            self,
+            background= "#000",
+            image = self.photo,
+            padding = 5,
+            foreground= "#fff",
+            text = "Add player",
+            compound = "left",
+            font = ("Helvetica", 20)
+        ) 
+        self.image_label.pack()
 
-        label = ttk.Label(self, text="Page 1", font=LARGEFONT)
-        label.grid(row=0, column=4, padx=10, pady=10)
+        self.label_title = ttk.Label(
+            self,
+            text="Add a event",
+            background="#000",
+            foreground="#fff",
+            padding="30",
+            font = ("Helvetica", 13)
+        )
+        self.label_title.pack()
+        
+        self.text_box = tk.Text(self, height=2, width=50)
+        self.text_box.pack()
 
-        button1 = ttk.Button(self, text="StartPage", command=lambda: controller.show_frame(StartPage))
-        button1.grid(row=1, column=1, padx=10, pady=10)
+        # Button
+        button = tk.Button(self, text="Create new event", height=2, width=30, pady=10, padx=10, bg="#000", fg="#fff")
+        button["command"] = lambda: controller.create_element(self)
+        self.element_counter = 0
+        button.pack(pady=10)
 
-        button2 = ttk.Button(self, text="Page 2", command=lambda: controller.show_frame(Page2))
-        button2.grid(row=2, column=1, padx=10, pady=10)
+        # Frame to contain the elements
+        self.element_frame = tk.Frame(self, bg="black")
+        self.element_frame.pack()
 
-class Page2(tk.Frame):
+class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+        self["bg"] = "black"
+        self.photo = tk.PhotoImage(file='logo.png')
+        self.photo = self.photo.subsample(20)
+        self.image_label = ttk.Label(
+            self,
+            background= "#000",
+            image = self.photo,
+            padding = 5,
+            foreground= "#fff",
+            text = "College Esports",
+            compound = "left",
+            font = ("Helvetica", 20)
+        ) 
+        self.image_label.pack()
 
-        label = ttk.Label(self, text="Page 2", font=LARGEFONT)
-        label.grid(row=0, column=4, padx=10, pady=10)
+        self.event_button = ttk.Button(self, text="View Events")
+        self.event_button["command"] = lambda: controller.show_frame(Page1)
+        self.event_button.pack(fill = "both", expand="true", padx=150,ipady=20, pady=20)
 
-        button1 = ttk.Button(self, text="Page 1", command=lambda: controller.show_frame(Page1))
-        button1.grid(row=1, column=1, padx=10, pady=10)
+        self.teams_button = ttk.Button(self, text="Add Teams")
+        self.teams_button.pack(fill = "both", expand="true", padx=150, ipady=20, pady=20)
 
-        button2 = ttk.Button(self, text="Startpage", command=lambda: controller.show_frame(StartPage))
-        button2.grid(row=2, column=1, padx=10, pady=10)
+        self.add_button = ttk.Button(self, text="Add Players")
+        self.add_button.pack(fill = "both", expand="true", padx=150, ipady=20, pady=20)
 
+        self.run_button = ttk.Button(self, text="Run Tournaments")
+        self.run_button.pack(fill = "both", expand="true", padx=150, ipady=20, pady=20)
+
+        self.leader_button = ttk.Button(self, text="Leaderboard")
+        self.leader_button.pack(fill = "both", expand="true", padx=150, ipady=20, pady=20)
+
+class Page2(tk.Frame):
+   def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self["bg"] = "black"
+        
+        # Load the image
+        photo = tk.PhotoImage(file="logo.png")
+        
+        # Subsample the image
+        subsampled_image = photo.subsample(25)
+        
+        style = ttk.Style()
+        style.theme_use("clam")
+        style.configure("black.TButton", background="#000")
+
+        button = ttk.Button(
+            self, 
+            image=subsampled_image, 
+            command=lambda: controller.show_frame(StartPage),
+            style="black.TButton" 
+        )
+        # buttons
+        button.photo = subsampled_image
+        button.grid(row=0, column=0, padx=10, pady=10, sticky="n")
+
+        label = ttk.Label(self, text="Add a Team", font=("Helvetica", 16), background='black', foreground='white')
+        label.grid(row=0, column=1, padx=0, pady=10, sticky="w")
+
+        # Configure grid to center all widgets to the screen
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=0)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        
 app = tkinterApp()
 app.mainloop()
